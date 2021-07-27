@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactPlayer from 'react-player';
 
 import { Video } from './Video.interface';
 
@@ -8,9 +9,17 @@ interface Props {
 
 function VideoItem({ video }: Props) {
   return (
-    <div>
-      <h1>{video.title}</h1>
-      <p>{video.description}</p>
+    <div className="col-md-4">
+      <div className="card card-body">
+        <div className="d-flex justify-content-between">
+          <h1>{video.title}</h1>
+          <span className="text-danger">X</span>
+        </div>
+        <p>{video.description}</p>
+        <div className="ratio ratio-16x9">
+          <ReactPlayer url={video.url} width="100%" height="100%" controls />
+        </div>
+      </div>
     </div>
   );
 }
