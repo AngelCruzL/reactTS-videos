@@ -19,3 +19,7 @@ export const getVideo = async (id: string) => {
 export const updateVideo = async (id: string, video: Video) => {
   return await axios.put<Video>(`${API}/videos/${id}`, video);
 };
+
+export const deleteVideo = async (id: string) => {
+  return await axios.delete<Video>(`${API}/videos/${id}`);
+};
