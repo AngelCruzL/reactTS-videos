@@ -12,7 +12,7 @@ function VideoItem({ video }: Props) {
     <div className="col-md-4">
       <div className="card card-body">
         <div className="d-flex justify-content-between">
-          <h1>{video.title}</h1>
+          <h2>{video.title}</h2>
           <span className="text-danger">X</span>
         </div>
         <p>{video.description}</p>
