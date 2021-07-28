@@ -1,5 +1,5 @@
-import React, { ChangeEvent, FormEvent, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 import { Video } from './Video.interface';
@@ -7,14 +7,18 @@ import * as VideoService from './VideoService';
 
 type InputChange = ChangeEvent<HTMLInputElement | HTMLTextAreaElement>;
 
+interface Params {
+  id: string;
+}
+
 const VideoForm = () => {
   const initialState = {
     description: '',
     title: '',
     url: '',
   };
-
   const history = useHistory();
+  const params = useParams<Params>();
 
   const [video, setVideo] = useState<Video>(initialState);
 
@@ -24,18 +28,33 @@ const VideoForm = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await VideoService.createVideo(video);
-    toast.success('New video added');
-    setVideo(initialState);
+    if (!params.id) {
+      await VideoService.createVideo(video);
+      toast.success('New video added');
+      setVideo(initialState);
+    } else {
+      await VideoService.updateVideo(params.id, video);
+      toast.success('Video Updated');
+    }
     history.push('/');
   };
+
+  const getVideo = async (id: string) => {
+    const res = await VideoService.getVideo(id);
+    const { description, title, url } = res.data;
+    setVideo({ description, title, url });
+  };
+
+  useEffect(() => {
+    if (params.id) getVideo(params.id);
+  }, []);
 
   return (
     <div className="row">
       <div className="col-md-4 offset-md-4">
         <div className="card">
           <div className="card-body">
-            <h3>New Video</h3>
+            {params.id ? <h3>Update Video</h3> : <h3>New Video</h3>}
 
             <form onSubmit={handleSubmit}>
               <input
@@ -66,7 +85,11 @@ const VideoForm = () => {
                 value={video.description}
               ></textarea>
 
-              <button className="btn btn-primary">Create Favorite</button>
+              {params.id ? (
+                <button className="btn btn-info">Update Video</button>
+              ) : (
+                <button className="btn btn-primary">Create Favorite</button>
+              )}
             </form>
           </div>
         </div>
